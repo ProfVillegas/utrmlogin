@@ -48,17 +48,44 @@
     </form>
     <div class="result">
         <?php
+        /*Consultar a la base de datos */
+        $users[]=array('nombre'=>'jose','passw'=>'Changos','profile'=>'admin');
+        $users[]=array('nombre'=>'ana','passw'=>'Clark','profile'=>'user');
+        $users[]=array('nombre'=>'invitado','passw'=>'invitado','profile'=>'guess');
+
             if(isset($_GET['nombre']) && isset($_GET['passw'])){
-                echo "<h3>Validad</h3>";
-                if($_GET['nombre']=="Jose" && $_GET['passw']=='Changos'){
-                    //Admin
-                    //User
-                    //Guess
-                    header("location:home.php");
-                    echo "Usuario Correcto";
-                } else {
-                    echo "Usuario Incorrecto";
-                }
+                
+                switch($_GET['profile']){
+                    case 'admin':{
+                        if($_GET['nombre']==$users[0]['nombre'] && $_GET['passw']==$users[0]['passw']){
+                            header("location:sys/admin_home.php");
+                        } else {
+                            echo "Usuario Incorrecto";
+                        }
+                        break;
+                    }
+                    case 'user':{
+                        if($_GET['nombre']==$users[1]['nombre'] && $_GET['passw']==$users[1]['passw']){
+                            header("location:sys/user_home.php");
+                        } else {
+                            echo "Usuario Incorrecto";
+                        }
+                        break;
+                    }
+                    case 'guess':{
+                        if($_GET['nombre']==$users[2]['nombre'] && $_GET['passw']==$users[2]['passw']){
+                            header("location:sys/guess_home.php");
+                        } else {
+                            echo "Usuario Incorrecto";
+                        }
+                        break;
+                    }
+                    default:{
+
+                    }
+
+
+                }                
             } 
         ?>
     </div>
