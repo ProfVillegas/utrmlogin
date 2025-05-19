@@ -67,12 +67,16 @@
                         
                     }
                     default:{
-                        
+
                     }
                 }
 
         }
         /*Consultar a la base de datos */
+
+        $con = new mysqli('localhost','root','','utrmlogin');
+        
+
         $users[]=array('nombre'=>'jose','passw'=>'Changos','profile'=>'admin');
         $users[]=array('nombre'=>'ana','passw'=>'Clark','profile'=>'user');
         $users[]=array('nombre'=>'invitado','passw'=>'invitado','profile'=>'guest');
