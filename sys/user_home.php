@@ -1,3 +1,6 @@
+<?php
+    session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +9,7 @@
     <title>User Admin</title>
 </head>
 <body>
+    <a href="logout.php">Cerrar sesión</a>
     
 </body>
 </html>

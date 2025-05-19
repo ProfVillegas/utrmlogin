@@ -1,3 +1,6 @@
+<?php
+    session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -42,22 +45,46 @@
         <select name="profile" id="profile">
             <option value="admin">admin</option>
             <option value="user">user</option>
-            <option value="guess">guess</option>
+            <option value="guest">guest</option>
         </select>
         <input type="submit" value="Login">
     </form>
     <div class="result">
         <?php
+        //Si usuario existe logeado
+        if(isset($_SESSION['profile'])){
+            switch($_SESSION['profile']){
+                    case 'admin':{
+                            header("location:sys/admin_home.php");
+                        break;
+                    }
+                    case 'user':{
+                            header("location:sys/user_home.php");
+                        break;
+                    }
+                    case 'guest':{
+                            header("location:sys/guest_home.php");
+                        
+                    }
+                    default:{
+                        
+                    }
+                }
+
+        }
         /*Consultar a la base de datos */
         $users[]=array('nombre'=>'jose','passw'=>'Changos','profile'=>'admin');
         $users[]=array('nombre'=>'ana','passw'=>'Clark','profile'=>'user');
-        $users[]=array('nombre'=>'invitado','passw'=>'invitado','profile'=>'guess');
+        $users[]=array('nombre'=>'invitado','passw'=>'invitado','profile'=>'guest');
 
             if(isset($_GET['nombre']) && isset($_GET['passw'])){
                 
                 switch($_GET['profile']){
                     case 'admin':{
                         if($_GET['nombre']==$users[0]['nombre'] && $_GET['passw']==$users[0]['passw']){
+                            $_SESSION['nombre']=$_GET['nombre'];
+                            $_SESSION['passw']=$_GET['passw'];
+                            $_SESSION['profile']=$_GET['profile'];
                             header("location:sys/admin_home.php");
                         } else {
                             echo "Usuario Incorrecto";
@@ -66,22 +93,28 @@
                     }
                     case 'user':{
                         if($_GET['nombre']==$users[1]['nombre'] && $_GET['passw']==$users[1]['passw']){
+                            $_SESSION['nombre']=$_GET['nombre'];
+                            $_SESSION['passw']=$_GET['passw'];
+                            $_SESSION['profile']=$_GET['profile'];
                             header("location:sys/user_home.php");
                         } else {
                             echo "Usuario Incorrecto";
                         }
                         break;
                     }
-                    case 'guess':{
+                    case 'guest':{
                         if($_GET['nombre']==$users[2]['nombre'] && $_GET['passw']==$users[2]['passw']){
-                            header("location:sys/guess_home.php");
+                            $_SESSION['nombre']=$_GET['nombre'];
+                            $_SESSION['passw']=$_GET['passw'];
+                            $_SESSION['profile']=$_GET['profile'];
+                            header("location:sys/guest_home.php");
                         } else {
                             echo "Usuario Incorrecto";
                         }
                         break;
                     }
                     default:{
-
+                        echo "Usuario Incorrecto";
                     }
 
 
