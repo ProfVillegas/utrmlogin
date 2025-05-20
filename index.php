@@ -75,8 +75,68 @@
         /*Consultar a la base de datos */
 
         $con = new mysqli('localhost','root','','utrmlogin');
+         
+        // connect_errno: Verifica si ocurrió un error al intentar conectar a la base de datos.
+        // La propiedad 'connect_errno' pertenece al objeto de conexión mysqli.
+        // Retorna un valor entero distinto de cero si hay un error de conexión, o cero si la conexión fue exitosa.
+        // No recibe argumentos.
+        // Se utiliza para manejar errores de conexión y tomar acciones apropiadas en caso de fallo.
+        if($con->connect_errno){
+            /**
+             * connect_error: Muestra un mensaje de error si ocurre un problema al conectar con la base de datos.
+             *
+             * Posibles errores que puede regresar $con->connect_error:
+             * - "Access denied for user": Usuario o contraseña incorrectos.
+             * - "Unknown database": El nombre de la base de datos no existe.
+             * - "Can't connect to MySQL server": El servidor MySQL no está disponible o la dirección es incorrecta.
+             * - "Too many connections": El servidor ha alcanzado el límite de conexiones permitidas.
+             * - "Connection refused": El servidor rechazó la conexión (puerto incorrecto o firewall).
+             *
+             * Para darles formato a los errores:
+             * - Se utiliza una etiqueta <h4> con la clase 'error' para resaltar el mensaje.
+             * - Se recomienda no mostrar detalles sensibles en producción, solo mensajes genéricos.
+             * - Para un mejor manejo, se puede registrar el error en un archivo de log y mostrar un mensaje amigable al usuario.
+             */
+             echo "<h4 class='error'>MSQYL: Error ".$con->connect_error."</h4>";
+             exit();
+        } else{
+            if(isset($_GET['nombre']) && isset($_GET['passw'])){
+                $_SESSION['nombre']=$_GET['nombre'];
+                $_SESSION['profile']=$_GET['profile'];
+                $passw=$_GET['passw'];
+
+                $query="select id, username, passw, roll from users
+                where username = ? and passw = ?";
+                // El método prepare de mysqli prepara una consulta SQL para su ejecución segura,
+                // permitiendo el uso de parámetros en la consulta y evitando inyecciones SQL.
+                $stmt=$con->prepare($query);
 
 
+                //Vincular el primer parametro
+                if($stmt){
+                    $stmt->bind_param("ss",$_GET['nombre'],$_GET['passw']);
+                    // El método bind_param recibe: 
+                    // 1. Una cadena con los tipos de los parámetros 
+                    // ('s' para string, 'i' para integer, 'd' para Flotantes, 'b' para Boleanos.)
+                    // Si en este apartado colocamos 'ssi', debemos enviar 3 valores en el orden que
+                    // los primeros 2 argumentos deben ser valores string y el ultimo debe ser integer.
+                    // 2. Una variable para cada parámetro a enlazar, en el mismo orden que aparecen en la consulta
+                    $stmt->execute();
+                    $result=$stmt->get_result();
+
+                    var_dump($result->num_rows);
+                    // Distintos tipos de fetch que tiene mysqli:
+                    // $result->fetch_assoc()    // Devuelve un array asociativo (clave = nombre de columna)
+                    // $result->fetch_row()      // Devuelve un array numérico (índices 0, 1, 2, ...)
+                    // $result->fetch_array()    // Devuelve un array tanto asociativo como numérico
+                    // $result->fetch_object()   // Devuelve un objeto con propiedades iguales a los nombres de columna
+
+                    var_dump($result->fetch_assoc());
+                }
+            }
+        }
+
+        /*
         $users[]=array('nombre'=>'jose','passw'=>'Changos','profile'=>'admin');
         $users[]=array('nombre'=>'ana','passw'=>'Clark','profile'=>'user');
         $users[]=array('nombre'=>'invitado','passw'=>'invitado','profile'=>'guest');
@@ -123,7 +183,7 @@
 
 
                 }                
-            } 
+            } */
         ?>
     </div>
     <?php
