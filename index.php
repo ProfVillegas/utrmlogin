@@ -42,18 +42,14 @@
         <input type="text" name="nombre" id="nombre" required>
         <label for="passw">Contraseña</label>
         <input type="password" name="passw" id="passw" required>
-        <select name="profile" id="profile">
-            <option value="admin">admin</option>
-            <option value="user">user</option>
-            <option value="guest">guest</option>
-        </select>
+        
         <input type="submit" value="Login">
     </form>
     <div class="result">
         <?php
         //Si usuario existe logeado
-        if(isset($_SESSION['profile'])){
-            switch($_SESSION['profile']){
+        if(isset($_SESSION['roll'])){
+            switch($_SESSION['roll']){
                     case 'admin':{
                             header("location:sys/admin_home.php");
                         break;
@@ -102,7 +98,7 @@
         } else{
             if(isset($_GET['nombre']) && isset($_GET['passw'])){
                 $_SESSION['nombre']=$_GET['nombre'];
-                $_SESSION['profile']=$_GET['profile'];
+                
                 $passw=$_GET['passw'];
 
                 $query="select id, username, passw, roll from users
@@ -124,31 +120,43 @@
                     $stmt->execute();
                     $result=$stmt->get_result();
 
-                    var_dump($result->num_rows);
+                    //var_dump($result->num_rows);
+
+                    //Si no encuentra usuario válido
+                    if($result->num_rows!=1){
+                        header("location:index.php?errno=2");
+                    } else {                    
                     // Distintos tipos de fetch que tiene mysqli:
                     // $result->fetch_assoc()    // Devuelve un array asociativo (clave = nombre de columna)
                     // $result->fetch_row()      // Devuelve un array numérico (índices 0, 1, 2, ...)
                     // $result->fetch_array()    // Devuelve un array tanto asociativo como numérico
                     // $result->fetch_object()   // Devuelve un objeto con propiedades iguales a los nombres de columna
 
-                    var_dump($result->fetch_assoc());
+                    //var_dump($result->fetch_assoc());
+                    $user=$result->fetch_assoc();
+                    echo $user['roll'];
+                    $_SESSION['roll']=$user['roll'];
+                    $_SESSION['id']=$user['id'];
+                    header("location:sys/".$user['roll']."_home.php");
+
+                    }
                 }
             }
         }
 
         /*
-        $users[]=array('nombre'=>'jose','passw'=>'Changos','profile'=>'admin');
-        $users[]=array('nombre'=>'ana','passw'=>'Clark','profile'=>'user');
-        $users[]=array('nombre'=>'invitado','passw'=>'invitado','profile'=>'guest');
+        $users[]=array('nombre'=>'jose','passw'=>'Changos','roll'=>'admin');
+        $users[]=array('nombre'=>'ana','passw'=>'Clark','roll'=>'user');
+        $users[]=array('nombre'=>'invitado','passw'=>'invitado','roll'=>'guest');
 
             if(isset($_GET['nombre']) && isset($_GET['passw'])){
                 
-                switch($_GET['profile']){
+                switch($_GET['roll']){
                     case 'admin':{
                         if($_GET['nombre']==$users[0]['nombre'] && $_GET['passw']==$users[0]['passw']){
                             $_SESSION['nombre']=$_GET['nombre'];
                             $_SESSION['passw']=$_GET['passw'];
-                            $_SESSION['profile']=$_GET['profile'];
+                            $_SESSION['roll']=$_GET['roll'];
                             header("location:sys/admin_home.php");
                         } else {
                             echo "Usuario Incorrecto";
@@ -159,7 +167,7 @@
                         if($_GET['nombre']==$users[1]['nombre'] && $_GET['passw']==$users[1]['passw']){
                             $_SESSION['nombre']=$_GET['nombre'];
                             $_SESSION['passw']=$_GET['passw'];
-                            $_SESSION['profile']=$_GET['profile'];
+                            $_SESSION['roll']=$_GET['roll'];
                             header("location:sys/user_home.php");
                         } else {
                             echo "Usuario Incorrecto";
@@ -170,7 +178,7 @@
                         if($_GET['nombre']==$users[2]['nombre'] && $_GET['passw']==$users[2]['passw']){
                             $_SESSION['nombre']=$_GET['nombre'];
                             $_SESSION['passw']=$_GET['passw'];
-                            $_SESSION['profile']=$_GET['profile'];
+                            $_SESSION['roll']=$_GET['roll'];
                             header("location:sys/guest_home.php");
                         } else {
                             echo "Usuario Incorrecto";
