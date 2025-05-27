@@ -105,7 +105,7 @@
                                 <td><?php echo $row['id'];?></td>
                                 <td><?php echo $row['username'];?></td>
                                 <td><?php echo $row['roll'];?></td>
-                                <td><?php echo $row['id'];?></td>
+                                <td><a class="visible-on" href="#">on</a></td>
                                 <td>
                                     <button class="btn btn-sm btn-warning">Editar</button>
                                     <button class="btn btn-sm btn-danger">Eliminar</button>
@@ -120,6 +120,11 @@
             </div>
         </div>
     </div>
+    <script>
+        document.getElementsByClass('visible-on').addEventListener('click',function(){
+            alert();
+        });
+    </script>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
