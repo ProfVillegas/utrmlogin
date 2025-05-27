@@ -138,12 +138,15 @@
                     $_SESSION['roll']=$user['roll'];
                     $_SESSION['id']=$user['id'];
                     header("location:sys/".$user['roll']."_home.php");
+                    $result->free();
 
                     }
                 }
             }
         }
 
+        //Cerrar la conexión
+        $con->close();
         /*
         $users[]=array('nombre'=>'jose','passw'=>'Changos','roll'=>'admin');
         $users[]=array('nombre'=>'ana','passw'=>'Clark','roll'=>'user');
