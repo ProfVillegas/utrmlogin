@@ -1,8 +1,8 @@
 <?php
+header('Content-Type:application/json');
 session_start();
 
-$op=$_POST['op'];
-
-echo json_encode($_POST);
+$data =json_decode(file_get_contents("php://input"),true);
+echo json_encode($data[0]);
 
 ?>

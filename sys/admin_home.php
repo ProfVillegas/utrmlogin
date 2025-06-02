@@ -103,7 +103,7 @@ if ($con->connect_errno) {
                                     <td><?php echo $row['id']; ?></td>
                                     <td><?php echo $row['username']; ?></td>
                                     <td><?php echo $row['roll']; ?></td>
-                                    <td><a class="visible-on" href="#" data-id="<?php echo $row['visible']; ?>">
+                                    <td><a class="visible-on" href="#" data-id="<?php echo $row['id']; ?>" data-vs="<?php echo $row['visible']; ?>">
                                             <?php echo ($row['visible'] ? 'on' : 'off'); ?>
                                         </a></td>
                                     <td>
@@ -123,14 +123,20 @@ if ($con->connect_errno) {
     <script>
         document.addEventListener('click', function(event) {
             event.preventDefault();
-            SendAjaxRequest(event.target.dataset.id);
+            data = JSON.stringify([{
+                'op': 'visible',
+                'id': event.target.dataset.id,
+                'tb': 'users',
+                'vs': event.target.dataset.vs
+            }]);
+            SendAjaxRequest(data);
             if (event.target.matches('.visible-on')) {
                 //alert(event.target.dataset.id);
-                if (event.target.dataset.id == 1) {
-                    event.target.dataset.id = 0;
+                if (event.target.dataset.vs == 1) {
+                    event.target.dataset.vs = 0;
                     event.target.textContent = "off";
                 } else {
-                    event.target.dataset.id = 1;
+                    event.target.dataset.vs = 1;
                     event.target.textContent = "on";
 
                 }
@@ -143,13 +149,12 @@ if ($con->connect_errno) {
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        'op': data
-                    })
+                    body: data
                 })
                 .then(response => response.json())
                 .then(json => {
-                    alert(JSON.stringify(json));
+                    //alert(JSON.stringify(json));
+                    console.log(json.vs);
                 }).catch(error => {
                     alert('Error:' + error);
                 });
