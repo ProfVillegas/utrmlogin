@@ -1,8 +1,43 @@
 <?php
+// Establece el tipo de contenido de la respuesta como JSON
 header('Content-Type:application/json');
+
+// Inicia la sesión PHP
 session_start();
 
-$data =json_decode(file_get_contents("php://input"),true);
-echo json_encode($data[0]);
+// Obtiene y decodifica los datos JSON recibidos en la petición (primer elemento del array)
+$data = json_decode(file_get_contents("php://input"), true)[0];
+
+/* Conexión a la base de datos MySQL */
+$con = new mysqli('localhost', 'root', '', 'utrmlogin');
+
+// Consulta SQL para actualizar el campo 'visible' del usuario
+$query = "UPDATE users SET visible=? WHERE id=?";
+
+// Prepara la consulta SQL para evitar inyección de SQL
+$stmt = $con->prepare($query);
+
+// Invierte el valor de 'visible': si es 1 lo pone en 0, si es 0 lo pone en 1
+$vs = ($data['vs']) ? 0 : 1;
+
+// Vincula los parámetros a la consulta preparada (ambos son enteros)
+$stmt->bind_param("ii", $vs, $data['id']);
+
+// Ejecuta la consulta y verifica si fue exitosa
+if ($stmt->execute()) {
+    // Si la actualización fue exitosa, retorna el id y el nuevo valor de 'visible'
+    $res = array('res' => '1', 'id' => $data['id'], 'vs' => $vs);
+} else {
+    // Si hubo un error, retorna un mensaje de error
+    $res = array('res' => '2', 'msg' => 'Error: Registro no localizado.');
+}
+
+// Cierra la consulta y la conexión a la base de datos
+$stmt->close();
+$con->close();
+
+// Devuelve la respuesta en formato JSON
+echo json_encode($res);
+?>
 
 ?>

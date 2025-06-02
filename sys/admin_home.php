@@ -123,28 +123,57 @@ if ($con->connect_errno) {
     <script>
         document.addEventListener('click', function(event) {
             event.preventDefault();
-            data = JSON.stringify([{
-                'op': 'visible',
-                'id': event.target.dataset.id,
-                'tb': 'users',
-                'vs': event.target.dataset.vs
-            }]);
-            SendAjaxRequest(data);
             if (event.target.matches('.visible-on')) {
-                //alert(event.target.dataset.id);
-                if (event.target.dataset.vs == 1) {
-                    event.target.dataset.vs = 0;
-                    event.target.textContent = "off";
-                } else {
-                    event.target.dataset.vs = 1;
-                    event.target.textContent = "on";
+                // Prepara un objeto JSON con los datos necesarios para una operación de visibilidad sobre un usuario.
+                // El objeto contiene:
+                //   'op'  : tipo de operación ('visible'),
+                //   'id'  : identificador del usuario obtenido del atributo 'data-id' del elemento que disparó el evento,
+                //   'tb'  : nombre de la tabla ('users'),
+                //   'vs'  : valor de visibilidad obtenido del atributo 'data-vs'.
+                // Este objeto se serializa como cadena JSON con la propiedad 'stringify' para su posterior envío, probablemente a través de una petición AJAX.
+                data = JSON.stringify([{
+                    'op': 'visible',
+                    'id': event.target.dataset.id,
+                    'tb': 'users',
+                    'vs': event.target.dataset.vs
+                }]);
 
-                }
+                // Envía una solicitud AJAX utilizando los datos proporcionados y maneja la respuesta usando promesas.
+                SendAjaxRequest(data).then(function(RespuestaAjax) {
+                    console.log(RespuestaAjax);
+
+                    /*
+                     * Maneja la respuesta de la función SendAjaxRequest (AJAX).
+                     * Si la respuesta es exitosa (res == 1) y el elemento activador tiene la clase 'visible-on',
+                     * alterna el estado de visibilidad representado por el atributo 'data-vs' y actualiza el texto del elemento
+                     * entre "on" y "off". Si la respuesta no es exitosa, muestra un mensaje de alerta con el mensaje recibido.
+                     *
+                     * @param {Object} RespuestaAjax - Objeto que contiene la respuesta de la petición AJAX.
+                     * @param {Event} event - Evento que dispara la función, utilizado para identificar el elemento objetivo.
+                     */
+                    if (RespuestaAjax.res == 1) {
+
+                        //alert(event.target.dataset.id);
+                        if (event.target.dataset.vs == "1") {
+                            event.target.dataset.vs = 0;
+                            event.target.textContent = "off";
+                        } else {
+                            event.target.dataset.vs = 1;
+                            event.target.textContent = "on";
+
+                        }
+                    } else {
+                        alert(RespuestaAjax.msg);
+                    }
+                }).catch(function(error) {
+                    alert('Error:' + error);
+                });
             }
+
         });
 
         function SendAjaxRequest(data) {
-            fetch('request.php', {
+            return fetch('request.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -154,7 +183,7 @@ if ($con->connect_errno) {
                 .then(response => response.json())
                 .then(json => {
                     //alert(JSON.stringify(json));
-                    console.log(json.vs);
+                    return json;
                 }).catch(error => {
                     alert('Error:' + error);
                 });
