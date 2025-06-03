@@ -39,5 +39,3 @@ $con->close();
 // Devuelve la respuesta en formato JSON
 echo json_encode($res);
 ?>
-
-?>
