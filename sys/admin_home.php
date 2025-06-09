@@ -252,6 +252,8 @@ if ($con->connect_errno) {
                             <option value="user">User</option>
                             <option value="guest">Guest</option>
                         </select>
+                        <input type="hidden" name="op" value="new">
+                        <input type="hidden" name="tb" value="users">
                     </form>
                 </div>
                 <div class="modal-footer">
