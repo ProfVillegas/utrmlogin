@@ -81,7 +81,7 @@ if ($con->connect_errno) {
             <!-- Main Content -->
             <div class="col-md-9 col-lg-10 main-content">
                 <h2>Lista de Usuarios</h2>
-                <button class="btn btn-primary mb-3" onclick="add(this)">Agregar Usuario</button>
+                <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#userModal">Agregar Usuario</button>
 
                 <!-- Tabla de Usuarios -->
                 <div class="table-responsive">
@@ -107,8 +107,8 @@ if ($con->connect_errno) {
                                             <?php echo ($row['visible'] ? 'on' : 'off'); ?>
                                         </a></td>
                                     <td>
-                                        <button class="btn btn-sm btn-warning save">Editar</button>
-                                        <button class="btn btn-sm btn-danger remove">Eliminar</button>
+                                        <button class="btn btn-sm btn-warning save" data-bs-toggle="modal" data-bs-target="#modalAccion">Editar</button>
+                                        <button class="btn btn-sm btn-danger remove" data-bs-toggle="modal" data-bs-target="#modalAccion">Eliminar</button>
                                     </td>
                                 </tr>
                             <?php
@@ -188,10 +188,61 @@ if ($con->connect_errno) {
                     alert('Error:' + error);
                 });
         }
+
+        function sendData(form) {
+            const data = {};
+            new FormData(form).forEach((val, key) => {
+                data[key] = val;
+            });
+            return json.stringify(data);
+        }
+
+        function modalCrear() {
+            alert('Acción realizada correctamente');
+            var modal = bootstrap.Modal.getInstance(document.getElementById('userModal'));
+            if (modal) {
+                modal.hide();
+            }
+        }
     </script>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Modal de Usuario -->
+    <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userModalLabel">Acción de Usuario</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body" id="modalContent"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="modalActionBtn" onclick="handleModalAccept()">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Confirmación -->
+    <div class="modal fade" id="modalAccion" tabindex="-1" aria-labelledby="modalAccionLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalAccionLabel">Confirmación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Estás seguro de realizar esta acción?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
