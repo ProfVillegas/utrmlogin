@@ -189,20 +189,39 @@ if ($con->connect_errno) {
                 });
         }
 
-        function sendData(form) {
+        function modalCrear(frm) {
             const data = {};
+            form = document.getElementById(frm);
             new FormData(form).forEach((val, key) => {
                 data[key] = val;
             });
-            return json.stringify(data);
-        }
+            var modal = bootstrap.Modal.getInstance(document.getElementById('userModal'));           
+                
+            SendAjaxRequest(data).then(function(RespuestaAjax) {
+                console.log(RespuestaAjax);
 
-        function modalCrear() {
-            alert('Acción realizada correctamente');
-            var modal = bootstrap.Modal.getInstance(document.getElementById('userModal'));
-            if (modal) {
-                modal.hide();
-            }
+                /*
+                 * Maneja la respuesta de la función SendAjaxRequest (AJAX).
+                 * Si la respuesta es exitosa (res == 1) y el elemento activador tiene la clase 'visible-on',
+                 * alterna el estado de visibilidad representado por el atributo 'data-vs' y actualiza el texto del elemento
+                 * entre "on" y "off". Si la respuesta no es exitosa, muestra un mensaje de alerta con el mensaje recibido.
+                 *
+                 * @param {Object} RespuestaAjax - Objeto que contiene la respuesta de la petición AJAX.
+                 * @param {Event} event - Evento que dispara la función, utilizado para identificar el elemento objetivo.
+                 */
+                if (RespuestaAjax.res == 1) {
+                    modal.hide();
+                    location.reload();
+                   
+                } else {
+                    alert(RespuestaAjax.msg);
+                }
+            }).catch(function(error) {
+                alert('Error:' + error);
+            });
+
+           
+
         }
     </script>
 
@@ -216,10 +235,28 @@ if ($con->connect_errno) {
                     <h5 class="modal-title" id="userModalLabel">Acción de Usuario</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
-                <div class="modal-body" id="modalContent"></div>
+                <div class="modal-body" id="modalContent">
+                    <form id="frmUsers">
+                        <label for="username" class="username">Nombre de usuario</label>
+                        <input type="text" name="username" id="username"><br>
+                        <label for="psw" class="psw">Password</label>
+                        <input type="password" name="psw" id="psw"><br>
+                        <label for="visible" class="visible">Visible</label>
+                        <select name="visible" id="visible">
+                            <option value="0" selected>Off</option>
+                            <option value="1">On</option>
+                        </select><br>
+                        <label for="roll" class="roll">Perfil</label>
+                        <select name="roll" id="roll">
+                            <option value="admin">Admin</option>
+                            <option value="user">User</option>
+                            <option value="guest">Guest</option>
+                        </select>
+                    </form>
+                </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" id="modalActionBtn" onclick="()">Aceptar</button>
+                    <button type="button" class="btn btn-primary" id="modalActionBtn" onclick="modalCrear('frmUsers')">Aceptar</button>
                 </div>
             </div>
         </div>
