@@ -219,7 +219,7 @@ if ($con->connect_errno) {
                 <div class="modal-body" id="modalContent"></div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" id="modalActionBtn" onclick="handleModalAccept()">Aceptar</button>
+                    <button type="button" class="btn btn-primary" id="modalActionBtn" onclick="()">Aceptar</button>
                 </div>
             </div>
         </div>
